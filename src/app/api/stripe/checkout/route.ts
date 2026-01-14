@@ -22,8 +22,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutSession.url });
 
-  } catch (error: any) {
-    console.error("STRIPE_ERROR:", error);
-    return new NextResponse(error.message || "Internal Error", { status: 500 });
-  }
+} catch (error: any) {
+  console.error("STRIPE_ERROR:", error);
+
+  return NextResponse.json(
+    { error: error.message || "Internal Error" },
+    { status: 500 }
+  );
+}
 }
