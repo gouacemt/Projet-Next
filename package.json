@@ -28,6 +28,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tabler/icons-react": "^3.36.1",
     "@tanstack/react-table": "^8.21.3",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
@@ -39,11 +40,10 @@
     "react-dom": "19.2.3",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
+    "stripe": "^20.1.2",
     "tailwind-merge": "^3.4.0",
     "vaul": "^1.1.2",
-    "zod": "^4.3.5",
-    "stripe": "^20.1.2",
-    "tailwind-merge": "^3.4.0"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
