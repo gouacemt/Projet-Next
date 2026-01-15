@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+export const runtime = "nodejs"; 
+
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error(error);
+    console.error("REGISTER ERROR:", error);
     return NextResponse.json(
       { error: "Erreur serveur" },
       { status: 500 }
