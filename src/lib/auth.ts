@@ -1,5 +1,3 @@
-// Fichier : lib/auth.ts
-
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,13 +5,14 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost: true, // ✅ OBLIGATOIRE AVEC NEXT 16
+  trustHost: true,
 
   adapter: PrismaAdapter(prisma),
 
   session: {
     strategy: "jwt",
   },
+
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,18 +21,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // ========================================
-        // ÉTAPE 1 : VALIDATION DES ENTRÉES
-        // ========================================
+        // Validation des entrées
         if (!credentials?.email || !credentials?.password) {
-          console.error("❌ Tentative de connexion sans email ou mot de passe");
+          console.error("❌ Email ou mot de passe manquant");
           return null;
         }
 
-        // ========================================
-        // ÉTAPE 2 : RÉCUPÉRATION DE L'UTILISATEUR
-        // ========================================
-        // ✅ CORRECTION : Sélection explicite du champ password
+        // Récupération de l'utilisateur avec le password
         const user = await prisma.user.findUnique({
           where: { 
             email: credentials.email as string 
@@ -42,29 +36,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             id: true,
             email: true,
             name: true,
-            password: true,        // ✅ Plus d'erreur TypeScript
+            password: true,
             emailVerified: true,
             image: true,
-            createdAt: true,
           },
         });
 
-        // Vérification de l'existence de l'utilisateur
+        // Vérification de l'existence
         if (!user) {
-          console.error("❌ Aucun utilisateur trouvé avec cet email");
+          console.error("❌ Utilisateur introuvable");
           return null;
         }
 
-        // Vérification de la présence du mot de passe hashé
+        // Vérification du password (pour éviter les comptes OAuth)
         if (!user.password) {
-          console.error("❌ Utilisateur sans mot de passe (compte OAuth?)");
+          console.error("❌ Compte sans mot de passe");
           return null;
         }
 
-        // ========================================
-        // ÉTAPE 3 : COMPARAISON DU MOT DE PASSE
-        // ========================================
-        // ✅ user.password est maintenant reconnu par TypeScript
+        // Comparaison du mot de passe
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
           user.password
@@ -75,25 +65,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // ========================================
-        // ÉTAPE 4 : CONNEXION RÉUSSIE
-        // ========================================
-        console.log("✅ Connexion réussie pour :", user.email);
-        
-        // Retour de l'utilisateur SANS le password
+        console.log("✅ Connexion réussie:", user.email);
+
+        // Retour sans le password
         return {
           id: user.id,
-          email: user.email,
-          name: user.name,
-          emailVerified: user.emailVerified,
-          image: user.image,
+          email: user.email!,
+          name: user.name || null,
+          emailVerified: user.emailVerified || null,
+          image: user.image || null,
         };
       },
     }),
   ],
+
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/login",
   },
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

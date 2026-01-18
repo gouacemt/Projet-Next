@@ -1,10 +1,7 @@
-
-
 "use client";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
@@ -32,38 +29,38 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      // FEATURES
-<section className="py-20 bg-muted">
-  <div className="max-w-6xl mx-auto px-4">
-    <h2 className="text-3xl font-bold text-center mb-12">
-      Everything you need to run your SaaS
-    </h2>
 
-    <div className="grid gap-8 md:grid-cols-3">
-      <div className="rounded-lg border bg-background p-6 text-center space-y-3">
-        <h3 className="font-semibold text-lg">Project Management</h3>
-        <p className="text-muted-foreground text-sm">
-          Create and manage your projects from a simple and intuitive dashboard.
-        </p>
-      </div>
+      {/* FEATURES */}
+      <section className="py-20 bg-muted">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Everything you need to run your SaaS
+          </h2>
 
-      <div className="rounded-lg border bg-background p-6 text-center space-y-3">
-        <h3 className="font-semibold text-lg">Secure Authentication</h3>
-        <p className="text-muted-foreground text-sm">
-          JWT-based authentication with protected routes and secure sessions.
-        </p>
-      </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="rounded-lg border bg-background p-6 text-center space-y-3">
+              <h3 className="font-semibold text-lg">Project Management</h3>
+              <p className="text-muted-foreground text-sm">
+                Create and manage your projects from a simple and intuitive dashboard.
+              </p>
+            </div>
 
-      <div className="rounded-lg border bg-background p-6 text-center space-y-3">
-        <h3 className="font-semibold text-lg">Subscription Access</h3>
-        <p className="text-muted-foreground text-sm">
-          Unlock premium features with Stripe-powered subscriptions.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+            <div className="rounded-lg border bg-background p-6 text-center space-y-3">
+              <h3 className="font-semibold text-lg">Secure Authentication</h3>
+              <p className="text-muted-foreground text-sm">
+                JWT-based authentication with protected routes and secure sessions.
+              </p>
+            </div>
 
+            <div className="rounded-lg border bg-background p-6 text-center space-y-3">
+              <h3 className="font-semibold text-lg">Subscription Access</h3>
+              <p className="text-muted-foreground text-sm">
+                Unlock premium features with Stripe-powered subscriptions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
