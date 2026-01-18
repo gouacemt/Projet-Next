@@ -24,12 +24,30 @@ export async function POST(req: Request) {
         { error: "Utilisateur déjà existant" },
         { status: 409 }
       );
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+
+const prisma = new PrismaClient();
+
+export async function POST(req: NextRequest) {
+  try {
+    const { name, email, password } = await req.json();
+
+    if (!name || !email || !password) {
+      return NextResponse.json({ message: "Tous les champs sont requis" }, { status: 400 });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return NextResponse.json({ message: "Email déjà utilisé" }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.create({
       data: {
+        name,
         email,
         password: hashedPassword,
       },
@@ -45,5 +63,9 @@ export async function POST(req: Request) {
       { error: "Erreur serveur" },
       { status: 500 }
     );
+    return NextResponse.json({ message: "Utilisateur créé !" });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }

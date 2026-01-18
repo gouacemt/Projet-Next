@@ -34,3 +34,5 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ success: true });
 }
+import { handlers } from "@/lib/auth"
+export const { GET, POST } = handlers
