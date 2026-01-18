@@ -34,7 +34,6 @@ export default function RegisterPage() {
         return;
       }
 
-      // ✅ succès → afficher message puis redirection
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");

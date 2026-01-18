@@ -18,7 +18,6 @@ export async function POST() {
       return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
     }
 
-    // Supprime d'abord toutes les relations
     await prisma.session.deleteMany({
       where: { userId: user.id },
     });
@@ -27,12 +26,10 @@ export async function POST() {
       where: { userId: user.id },
     });
 
-    // Puis supprime l'utilisateur
     await prisma.user.delete({
       where: { id: user.id },
     });
 
-    // Déconnecte et redirige
     await signOut({ redirect: false });
     
     return NextResponse.redirect(new URL("/?deleted=true", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"));

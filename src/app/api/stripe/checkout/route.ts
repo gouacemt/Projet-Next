@@ -15,7 +15,6 @@ export async function POST(req: Request) {
 
     const session = await auth();
     
-    // ✅ On vérifie que l'utilisateur est bien connecté
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Vous devez être connecté pour souscrire" },
@@ -35,10 +34,9 @@ export async function POST(req: Request) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       metadata: {
-        userId: session.user.id, // ✅ Important
+        userId: session.user.id, 
         priceId: priceId,
       },
-      // ✅ CRUCIAL : Ajouter le userId dans subscription_data aussi
       subscription_data: {
         metadata: {
           userId: session.user.id,

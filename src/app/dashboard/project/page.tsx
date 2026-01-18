@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, TrendingUp, Zap } from "lucide-react";
 
 export default async function DashboardPage() {
-  // Protection de la route
   const session = await auth();
 
   if (!session) {
