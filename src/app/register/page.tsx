@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +34,11 @@ export default function RegisterPage() {
         return;
       }
 
-      // ✅ succès → redirection vers login
-      router.push("/login");
+      // ✅ succès → afficher message puis redirection
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (err) {
       console.error(err);
       setError("Erreur réseau");
@@ -50,7 +54,18 @@ export default function RegisterPage() {
           Inscription
         </h1>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {success ? (
+          <div className="text-center">
+            <div className="mb-4">
+              <svg className="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Compte créé avec succès !</h2>
+            <p className="text-gray-600">Redirection vers la page de connexion...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Nom"
@@ -88,13 +103,16 @@ export default function RegisterPage() {
             {loading ? "Création..." : "S'inscrire"}
           </button>
         </form>
+        )}
         
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          Déjà un compte ?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Se connecter
-          </a>
-        </p>
+        {!success && (
+          <p className="text-sm text-gray-500 mt-4 text-center">
+            Déjà un compte ?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">
+              Se connecter
+            </a>
+          </p>
+        )}
       </div>
     </div>
   );

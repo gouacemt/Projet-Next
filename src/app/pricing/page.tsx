@@ -6,45 +6,48 @@ import { useState } from "react";
 
 const plans = [
   {
-    priceId: "price_1Spr2GEcoWfZo0Z51imsqEJ7",
+    priceId: "price_gratuit",
     name: "Plan Gratuit",
     price: "0€",
     period: "Gratuit",
-    description: "Pour découvrir l'application",
+    description: "Parfait pour démarrer",
     features: [
-      "Accès de base",
-      "1 projet",
+      "3 projets maximum",
+      "Gestion de tâches basique",
       "Support communautaire",
     ],
     buttonText: "Commencer",
     isFree: true,
   },
   {
-    priceId: "price_1SpqylEcoWfZo0Z5kV698yPR",
+    priceId: "price_1Sr2PjEcoWfZo0Z5iRyBQkp1",
     name: "Plan Pro",
     price: "9€",
     period: "/ mois",
-    description: "Accès complet à l'application",
+    description: "Pour les équipes productives",
     features: [
       "Projets illimités",
-      "Toutes les fonctionnalités",
+      "Collaboration en équipe",
+      "Exports PDF et CSV",
       "Support prioritaire",
-      "Exports avancés",
+      "Statistiques avancées",
     ],
     buttonText: "S'abonner",
     popular: true,
   },
   {
-    priceId: "price_1SpqylEcoWfZo0Z5twilHt6ci",
+    priceId: "price_1Sr2QoEcoWfZo0Z5bFWE8GpE",
     name: "Plan Entreprise",
     price: "29€",
     period: "/ mois",
-    description: "Pour les équipes",
+    description: "Pour les grandes organisations",
     features: [
       "Tout du Plan Pro",
       "Utilisateurs illimités",
-      "API Access",
+      "API Access complète",
       "Support dédié 24/7",
+      "Intégrations personnalisées",
+      "Formation d'équipe",
     ],
     buttonText: "S'abonner",
   },
@@ -54,8 +57,38 @@ export default function PricingPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleCheckout = async (priceId: string, isFree: boolean = false) => {
-    // Tous les plans redirigent vers la page de connexion
-    window.location.href = "/login";
+    // Plan gratuit : redirection vers login
+    if (isFree) {
+      window.location.href = "/login";
+      return;
+    }
+
+    // Plans payants : Stripe Checkout
+    setIsLoading(priceId);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ priceId }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        // Redirection vers Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        console.error("Erreur: Pas d'URL de retour", data);
+        alert("Erreur lors de la création de la session Stripe");
+      }
+    } catch (error) {
+      console.error("Erreur lors du checkout:", error);
+      alert("Une erreur est survenue");
+    } finally {
+      setIsLoading(null);
+    }
   };
 
   return (
