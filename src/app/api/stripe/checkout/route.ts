@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    // Récupération du priceId depuis le body
     const { priceId } = await req.json();
 
     if (!priceId) {
@@ -14,33 +13,44 @@ export async function POST(req: Request) {
       );
     }
 
-    // Récupération de l'utilisateur connecté (optionnel mais recommandé)
     const session = await auth();
-    const userId = session?.user?.id || "guest";
+    
+    // ✅ On vérifie que l'utilisateur est bien connecté
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Vous devez être connecté pour souscrire" },
+        { status: 401 }
+      );
+    }
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: priceId, // Utilisation du priceId dynamique
+          price: priceId,
           quantity: 1,
         },
       ],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       metadata: {
-        userId: userId,
+        userId: session.user.id, // ✅ Important
         priceId: priceId,
       },
-      customer_email: session?.user?.email || undefined,
+      // ✅ CRUCIAL : Ajouter le userId dans subscription_data aussi
+      subscription_data: {
+        metadata: {
+          userId: session.user.id,
+        },
+      },
+      customer_email: session.user.email || undefined,
     });
 
     return NextResponse.json({ url: checkoutSession.url });
 
   } catch (error: any) {
     console.error("STRIPE_ERROR:", error);
-
     return NextResponse.json(
       { error: error.message || "Internal Error" },
       { status: 500 }
