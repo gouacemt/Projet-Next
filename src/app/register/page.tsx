@@ -1,28 +1,61 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import Link from "next/link";
+import { useState } from "react";
 
 export default function RegisterPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name }),
+    });
+
+    if (res.ok) {
+      setSuccess(true);
+    } else {
+      const data = await res.json();
+      setError(data.message || "Erreur lors de l'inscription");
+    }
+  };
+
+  if (success) {
+    return <div>Inscription réussie ! <a href="/login">Se connecter</a></div>;
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <Card className="w-full max-w-sm p-6">
-        <h1 className="text-xl font-bold mb-4">Inscription</h1>
-
-        <div className="space-y-4">
-          <Input type="email" placeholder="Email" />
-          <Input type="password" placeholder="Mot de passe" />
-
-          <Button className="w-full">Créer un compte</Button>
-        </div>
-
-        <p className="text-sm text-center mt-4">
-          Déjà un compte ?{" "}
-          <Link href="/login" className="underline">
-            Se connecter
-          </Link>
-        </p>
-      </Card>
-    </main>
+    <div>
+      <h1>Inscription</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Nom"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">S'inscrire</button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </form>
+    </div>
   );
 }
